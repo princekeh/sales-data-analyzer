@@ -1,0 +1,50 @@
+# sales_data_analyzer.py
+# Simple, beginner-friendly sales data analyzer.
+# Note: I wrote this while learning pandas and matplotlib. It's intentionally simple.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def load_data(path="sales_data.csv"):
+    """Load sales CSV. Expect columns: Month,Sales"""
+    try:
+        df = pd.read_csv(path)
+        return df
+    except FileNotFoundError:
+        print(f"Error: {path} not found. Put a sales_data.csv file in the repo folder.")
+        raise
+
+def summarize(df):
+    """Print a tiny human-friendly summary."""
+    total = df['Sales'].sum()
+    mean = df['Sales'].mean()
+    best_idx = df['Sales'].idxmax()
+    best_month = df.loc[best_idx, 'Month']
+    print("----- SALES SUMMARY -----")
+    print(f"Total sales: ${total:,.2f}")
+    print(f"Average monthly sales: ${mean:,.2f}")
+    print(f"Best month: {best_month} (${df['Sales'].max():,.2f})")
+
+def plot_sales(df):
+    """Plot a simple line chart of monthly sales."""
+    plt.figure(figsize=(8,4))
+    plt.plot(df['Month'], df['Sales'], marker='o')
+    plt.title("Monthly Sales")
+    plt.xlabel("Month")
+    plt.ylabel("Sales ($)")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.grid(True)
+    plt.show()
+
+def main():
+    # small human note: the script expects Month order in CSV; no sorting is done automatically.
+    df = load_data()
+    summarize(df)
+    try:
+        plot_sales(df)
+    except Exception as e:
+        print("Plot failed (maybe running on a headless mobile environment).", e)
+
+if __name__ == "__main__":
+    main()
